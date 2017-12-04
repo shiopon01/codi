@@ -1,18 +1,18 @@
 # diagram creater in console
 
-golangの学習の一環として、shiopon01が作成中。
+golangの学習の一環として、shiopon01が作成中。  
+Markdownでこういう微妙な図作りたいけどめんどくさい時にどうぞ。
 
-## how use
+## how to use
 
 `+->` `<->` `<-+`の3つのトークンで、文字列を繋ぐ。  
 現在、スペースは1文字として換算するために字は詰める。
 
 ```
 $ codi "Router+->Gateway<->Internet\nor\nCorporate network"
-+--------+     +---------+     +---------------------------------+
-| Router | +-> | Gateway | <-> | Internet\nor\nCorporate network |
-+--------+     +---------+     +---------------------------------+
-
++----------+     +-----------+     +-----------------------------------+
+|  Router  | +-> |  Gateway  | <-> |  Internet\nor\nCorporate network  |
++----------+     +-----------+     +-----------------------------------+
 ```
 
 ## future

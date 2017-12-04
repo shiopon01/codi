@@ -96,8 +96,8 @@ func createBox (tokens []string) []string {
       result[2] += "     "
 
     } else {
-      for i := 0; i < len(v) + 4; i++ {
-        if i == 0 || i == len(v) + 3 {
+      for i := 0; i < len(v) + 6; i++ {
+        if i == 0 || i == len(v) + 5 {
           line += "+"
         } else {
           line += "-"
@@ -105,7 +105,7 @@ func createBox (tokens []string) []string {
       }
 
       result[0] += line
-      result[1] += "| " + v + " |"
+      result[1] += "|  " + v + "  |"
       result[2] += line
       line = ""
     }
