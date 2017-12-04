@@ -18,7 +18,7 @@ $ codi "Router+->Gateway<->Internet\nor\nCorporate network"
 ## future
 
 ```
-$ codi "Router +->Gateway<->Internet\nor\nCorporate network"
+$ codi "Router +-> Gateway <-> Internet\nor\nCorporate network"
 +----------+       +-----------+       +---------------------+
 |          |       |           | +---> |      Internet       |
 |  Router  | +---> |  Gateway  |       |         or          |
