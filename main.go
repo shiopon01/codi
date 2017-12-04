@@ -5,79 +5,92 @@ import (
   "flag"
 )
 
+
 func main () {
   flag.Parse()
   text := flag.Args()[0]
 
-  tokens := parse(text)
-  box := createBox(tokens)
+  split := parse(text)
+  box := createBox(split)
 
   for _, v := range box {
     fmt.Println(v)
   }
 }
 
+// split
 func parse (text string) []string {
-  result := make([]string, 0, 5)
-  str, buf := "", ""
+  var result []string
+  str, tbuf := "", ""
 
   for _, c := range text {
     c := string([]rune{c})
 
     switch c {
-    case "-":
-      if buf == "<" || buf == "+" {
-        buf += c
-      } else {
-        str += buf
-        buf = ""
-      }
-
     case "+":
-      if buf == "" {
-        buf += c
-      } else if buf == "<-" {
-        buf += c
-        buf += c
-        result = append(result, str)
-        result = append(result, buf)
-        str, buf = "", ""
+      if tbuf == "" || tbuf == "<-" {
+        tbuf += c
       } else {
-        str += buf
-        buf = ""
+        str += tbuf
+        str += c
+        tbuf = ""
       }
 
     case "<":
-      if buf == "" {
-        buf += c
+      if tbuf == "" {
+        tbuf += c
+      } else {
+        str += tbuf
+        str += c
+        tbuf = ""
+      }
+
+    case "-":
+      if tbuf == "<" || tbuf == "+" {
+        tbuf += c
+      } else {
+        str += tbuf
+        str += c
+        tbuf = ""
       }
 
     case ">":
-      if buf == "+-" || buf == "<-" {
-        buf += c
-        result = append(result, str)
-        result = append(result, buf)
-        str, buf = "", ""
+      if tbuf == "+-" || tbuf == "<-" {
+        tbuf += c
       } else {
-        str += buf
-        buf = ""
+        str += tbuf
+        str += c
+        tbuf = ""
       }
 
     default:
+      str += tbuf
       str += c
+      tbuf = ""
+    }
+
+    if len(tbuf) > 2 {
+      if containsToken(tbuf) {
+        result = append(result, str)
+        result = append(result, tbuf)
+        str, tbuf = "", ""
+      } else {
+        str += tbuf
+      }
     }
   }
-  result = append(result, str)
 
+  result = append(result, str)
   return result
 }
 
 
+// ---
 func createBox (tokens []string) []string {
   result, line := []string{"", "", ""}, ""
 
   for _, v := range tokens {
-    if v == "<-+" || v == "<->" || v == "+->" {
+    if containsToken(v) {
       result[0] += "     "
       result[1] += " " + v + " "
       result[2] += "     "
@@ -99,4 +112,19 @@ func createBox (tokens []string) []string {
   }
 
   return result
+}
+
+func containsToken (t string) bool {
+  tokens := [...]string{
+    "<-+",
+    "+->",
+    "<->",
+  }
+
+  for _, v := range tokens {
+    if t == v {
+      return true
+    }
+  }
+  return false
 }
