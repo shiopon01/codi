@@ -21,7 +21,7 @@ func main () {
 // split
 func parse (text string) []string {
   var result []string
-  str, tbuf := "", ""
+  str, tbuf, tfound := "", "", false // tbuf => token buffer
 
   for _, c := range text {
     c := string([]rune{c})
@@ -29,41 +29,29 @@ func parse (text string) []string {
     switch c {
     case "+":
       if tbuf == "" || tbuf == "<-" {
-        tbuf += c
-      } else {
-        str += tbuf
-        str += c
-        tbuf = ""
+        tfound = true
       }
 
     case "<":
       if tbuf == "" {
-        tbuf += c
-      } else {
-        str += tbuf
-        str += c
-        tbuf = ""
+        tfound = true
       }
 
     case "-":
       if tbuf == "<" || tbuf == "+" {
-        tbuf += c
-      } else {
-        str += tbuf
-        str += c
-        tbuf = ""
+        tfound = true
       }
 
     case ">":
       if tbuf == "+-" || tbuf == "<-" {
-        tbuf += c
-      } else {
-        str += tbuf
-        str += c
-        tbuf = ""
+        tfound = true
       }
+    }
 
-    default:
+    if tfound {
+      tfound = false
+      tbuf += c
+    } else {
       str += tbuf
       str += c
       tbuf = ""
