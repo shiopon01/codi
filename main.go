@@ -3,7 +3,11 @@ package main
 import (
   "fmt"
   "flag"
+  "strings"
 )
+
+// const
+const boxPadding = 2
 
 // tree
 type Node struct {
@@ -167,10 +171,11 @@ func constructBox (n *Node, box *[]string) {
     }
   } else {
     // not token
-
+    pad := strings.Repeat(" ", boxPadding)
     line := ""
-    for i := 0; i < len(n.text) + 6; i++ {
-      if i == 0 || i == len(n.text) + 5 {
+
+    for i := 0; i < len(n.text) + 2 + boxPadding * 2; i++ {
+      if i == 0 || i == len(n.text) + 1 + boxPadding * 2 {
         line += "+"
       } else {
         line += "-"
@@ -179,11 +184,11 @@ func constructBox (n *Node, box *[]string) {
 
     if len(*box) < 3 {
       *box = append(*box, line)
-      *box = append(*box, "|  " + n.text + "  |")
+      *box = append(*box, "|" + pad + n.text + pad +"|")
       *box = append(*box, line)
     } else {
       (*box)[0] += line
-      (*box)[1] += "|  " + n.text + "  |"
+      (*box)[1] += "|" + pad + n.text + pad +"|"
       (*box)[2] += line
     }
   }
