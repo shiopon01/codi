@@ -6,18 +6,19 @@ Markdownでこういう微妙な図作りたいけどめんどくさい時にど
 ## how to use
 
 `+->` `<->` `<-+`の3つのトークンで、文字列を繋ぐ。  
+`|` を挟むことで、文字の改行が可能。
 
 ```
-$ codi "Router +-> Gateway <-> Internet\nor\nCorporate network"
-+----------+     +-----------+     +-----------------------------------+
-|  Router  | +-> |  Gateway  | <-> |  Internet\nor\nCorporate network  |
-+----------+     +-----------+     +-----------------------------------+
+$ codi "Router +-> Gateway <-> Internet|or|nCorporate network"
++----------+     +-----------+     +---------------------------------+
+|  Router  | +-> |  Gateway  | <-> |  Internet|or|Corporate network  |
++----------+     +-----------+     +---------------------------------+
 ```
 
 ## future
 
 ```
-$ codi "Router +-> Gateway <-> Internet\nor\nCorporate network"
+$ codi "Router +-> Gateway <-> Internet|or|Corporate network"
 +----------+       +-----------+       +---------------------+
 |          |       |           | +---> |      Internet       |
 |  Router  | +---> |  Gateway  |       |         or          |

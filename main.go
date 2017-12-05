@@ -12,7 +12,7 @@ const boxPadding = 2
 // tree
 type Node struct {
   token bool
-  text string
+  text []string
   left, right *Node
 }
 
@@ -27,8 +27,12 @@ func newTree () *Tree {
 func newNode (text string) *Node {
   n := new(Node)
   n.token = containsToken(text)
-  n.text = text
+  n.text = split(text)
   return n
+}
+
+func split (s string) []string {
+  return strings.Split(s, "|")
 }
 
 func (t *Tree) insertTree (text string) {
@@ -46,6 +50,34 @@ func insertNode (node *Node, text string) *Node {
   }
   return node
 }
+
+func (t *Tree) maxLine () int {
+  root, line := t.root, 0
+  if root != nil {
+    line = len(root.text)
+
+    if root.left != nil {
+      maxLineNode(root.left, &line)
+    }
+    if root.right != nil {
+      maxLineNode(root.right, &line)
+    }
+  }
+  return line
+}
+
+func maxLineNode (n *Node, line *int) {
+  if len(n.text) > *line {
+    *line = len(n.text)
+  }
+  if n.left != nil {
+    maxLineNode(n.left, line)
+  }
+  if n.right != nil {
+    maxLineNode(n.right, line)
+  }
+}
+
 
 
 func (t *Tree) printTree () {
@@ -91,7 +123,6 @@ func main () {
 func parse (text string) *Tree {
   // var result []string
   tree := newTree()
-
   str, tbuf, tfound := "", "", false // tbuf => token buffer
 
   for _, c := range text {
@@ -130,7 +161,7 @@ func parse (text string) *Tree {
 
     if len(tbuf) > 2 {
       if containsToken(tbuf) {
-        tree.insertTree(strings.TrimSpace(tbuf))
+        tree.insertTree(tbuf)
         tree.insertTree(strings.TrimSpace(str))
         str, tbuf = "", ""
       } else {
@@ -147,56 +178,108 @@ func parse (text string) *Tree {
 // ---
 func createBox (t *Tree) []string {
   var box []string
+
   if t != nil {
-    constructBox(t.root, &box)
+    constructBox(t.root, &box, t.maxLine()) // line number
   }
   return box
 }
 
-func constructBox (n *Node, box *[]string) {
+func constructBox (n *Node, box *[]string, line int) {
   if n.left != nil {
-    constructBox(n.left, box)
+    constructBox(n.left, box, line)
   }
 
-  if n.token {
-    // token
-    if len(*box) < 3 {
+  if len(*box) < 3 {
+    if n.token { // IS TOKEN?
       *box = append(*box, "     ")
-      *box = append(*box, " " + n.text + " ")
+      *box = append(*box, " " + n.text[0] + " ")
       *box = append(*box, "     ")
-    } else {
-      (*box)[0] += "     "
-      (*box)[1] += " " + n.text + " "
-      (*box)[2] += "     "
-    }
-  } else {
-    // not token
-    pad := strings.Repeat(" ", boxPadding)
-    line := ""
-    for i := 0; i < len(n.text) + 2 + boxPadding * 2; i++ {
-      if i == 0 || i == len(n.text) + 1 + boxPadding * 2 {
-        line += "+"
+    } else {     // No, I'm not Token
+      if len(n.text) > 1 {
+
+        lineLength := 0
+        for _, v := range n.text {
+          if len(v) > lineLength {
+            lineLength = len(v)
+          }
+        }
+        frame := createFrame(lineLength)
+        writeLine := calcWriteLine(line, len(n.text))
+
+        for i := 0; i < line + 2; i++ {
+          if i == 0 || i == line + 1 {
+            *box = append(*box, frame)
+          }
+
+          if i - writeLine > -1 && i - writeLine < len(n.text) {
+            fmt.Println("f", (lineLength - len(n.text[i - writeLine])) / 2)
+            leftPad := boxPadding + ((lineLength - len(n.text[i - writeLine])) / 2)
+            rightPad := leftPad
+            if lineLength > len(n.text[i - writeLine]) && (lineLength - len(n.text[i - writeLine]) / 2) > 0 {
+              rightPad += 1
+            }
+
+            *box = append(*box, "|" + strings.Repeat(" ", leftPad) + n.text[i - writeLine] + strings.Repeat(" ", rightPad) +"|")
+          }
+        }
+
+
       } else {
-        line += "-"
+        frame := createFrame(len(n.text[0]))
+        pad := strings.Repeat(" ", boxPadding)
+
+        *box = append(*box, frame)
+        *box = append(*box, "|" + pad + n.text[0] + pad +"|")
+        *box = append(*box, frame)
       }
     }
 
-    if len(*box) < 3 {
-      *box = append(*box, line)
-      *box = append(*box, "|" + pad + n.text + pad +"|")
-      *box = append(*box, line)
+  } else {
+    // 3 LINE OVER
+
+    if n.token { // Token
+      (*box)[0] += "     "
+      (*box)[1] += " " + n.text[0] + " "
+      (*box)[2] += "     "
+
+      if len(n.text) > 1 {
+      } else {
+      }
     } else {
-      (*box)[0] += line
-      (*box)[1] += "|" + pad + n.text + pad +"|"
-      (*box)[2] += line
+      frame := createFrame(len(n.text[0]))
+      pad := strings.Repeat(" ", boxPadding)
+
+      (*box)[0] += frame
+      (*box)[1] += "|" + pad + n.text[0] + pad +"|"
+      (*box)[2] += frame
     }
   }
 
   if n.right != nil {
-    constructBox(n.right, box)
+    constructBox(n.right, box, line)
   }
 }
 
+func calcWriteLine (maxLine int, sentenceLine int) int {
+  res := 1
+  // if sentenceLine * 2 == maxLine {
+  //  res += 1
+  // }
+  return res
+}
+
+func createFrame (num int) string {
+  frame := ""
+  for i := 0; i < num + 2 + boxPadding * 2; i++ {
+    if i == 0 || i == num + 1 + boxPadding * 2 {
+      frame += "+"
+    } else {
+      frame += "-"
+    }
+  }
+  return frame
+}
 
 func containsToken (t string) bool {
   tokens := [...]string{
