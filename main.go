@@ -75,7 +75,7 @@ func main () {
   text := flag.Args()[0]
 
   split := parse(text)
-  split.printTree()
+  // split.printTree()
 
   box := createBox(split)
   for _, v := range box {
@@ -141,24 +141,33 @@ func parse (text string) *Tree {
 
 
 // ---
-func createBox (t *Tree) [5]string {
-  var box [5]string
+func createBox (t *Tree) []string {
+  var box []string
   if t != nil {
     constructBox(t.root, &box)
   }
   return box
 }
 
-func constructBox (n *Node, box *[5]string) {
+func constructBox (n *Node, box *[]string) {
   if n.left != nil {
     constructBox(n.left, box)
   }
 
   if n.token {
-    box[0] += "     "
-    box[1] += " " + n.text + " "
-    box[2] += "     "
+    // token
+    if len(*box) < 3 {
+      *box = append(*box, "     ")
+      *box = append(*box, " " + n.text + " ")
+      *box = append(*box, "     ")
+    } else {
+      (*box)[0] += "     "
+      (*box)[1] += " " + n.text + " "
+      (*box)[2] += "     "
+    }
   } else {
+    // not token
+
     line := ""
     for i := 0; i < len(n.text) + 6; i++ {
       if i == 0 || i == len(n.text) + 5 {
@@ -168,9 +177,15 @@ func constructBox (n *Node, box *[5]string) {
       }
     }
 
-    box[0] += line
-    box[1] += "|  " + n.text + "  |"
-    box[2] += line
+    if len(*box) < 3 {
+      *box = append(*box, line)
+      *box = append(*box, "|  " + n.text + "  |")
+      *box = append(*box, line)
+    } else {
+      (*box)[0] += line
+      (*box)[1] += "|  " + n.text + "  |"
+      (*box)[2] += line
+    }
   }
 
   if n.right != nil {
