@@ -87,14 +87,13 @@ func parse (text string) []string {
 
 // ---
 func createBox (tokens []string) []string {
-  result, line := []string{"", "", ""}, ""
+  line, result := "", []string{"", "", ""}
 
   for _, v := range tokens {
     if containsToken(v) {
       result[0] += "     "
       result[1] += " " + v + " "
       result[2] += "     "
-
     } else {
       for i := 0; i < len(v) + 6; i++ {
         if i == 0 || i == len(v) + 5 {
@@ -110,7 +109,6 @@ func createBox (tokens []string) []string {
       line = ""
     }
   }
-
   return result
 }
 
