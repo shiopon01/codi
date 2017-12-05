@@ -130,8 +130,8 @@ func parse (text string) *Tree {
 
     if len(tbuf) > 2 {
       if containsToken(tbuf) {
-        tree.insertTree(tbuf)
-        tree.insertTree(str)
+        tree.insertTree(strings.TrimSpace(tbuf))
+        tree.insertTree(strings.TrimSpace(str))
         str, tbuf = "", ""
       } else {
         str += tbuf
@@ -139,7 +139,7 @@ func parse (text string) *Tree {
     }
   }
 
-  tree.insertTree(str)
+  tree.insertTree(strings.TrimSpace(str))
   return tree
 }
 
@@ -173,7 +173,6 @@ func constructBox (n *Node, box *[]string) {
     // not token
     pad := strings.Repeat(" ", boxPadding)
     line := ""
-
     for i := 0; i < len(n.text) + 2 + boxPadding * 2; i++ {
       if i == 0 || i == len(n.text) + 1 + boxPadding * 2 {
         line += "+"

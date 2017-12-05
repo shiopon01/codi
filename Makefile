@@ -5,7 +5,7 @@ codi: main.go
 	go build -o ./bin/codi main.go
 
 test:
-	./bin/codi "A+->Gateway+->Internet\nor\nCorporate network"
+	./bin/codi "A +-> Gateway +-> Internet\nor\nCorporate network"
 .PHONY: test
 
 clean:

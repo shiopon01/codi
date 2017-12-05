@@ -6,10 +6,9 @@ Markdownでこういう微妙な図作りたいけどめんどくさい時にど
 ## how to use
 
 `+->` `<->` `<-+`の3つのトークンで、文字列を繋ぐ。  
-現在、スペースは1文字として換算するために字は詰める。
 
 ```
-$ codi "Router+->Gateway<->Internet\nor\nCorporate network"
+$ codi "Router +-> Gateway <-> Internet\nor\nCorporate network"
 +----------+     +-----------+     +-----------------------------------+
 |  Router  | +-> |  Gateway  | <-> |  Internet\nor\nCorporate network  |
 +----------+     +-----------+     +-----------------------------------+
