@@ -213,7 +213,6 @@ func constructBox (n *Node, box *[]string, line int) {
           }
 
           if i - writeLine > -1 && i - writeLine < len(n.text) {
-            fmt.Println("f", (lineLength - len(n.text[i - writeLine])) / 2)
             leftPad := boxPadding + ((lineLength - len(n.text[i - writeLine])) / 2)
             rightPad := leftPad
             if lineLength > len(n.text[i - writeLine]) && (lineLength - len(n.text[i - writeLine]) / 2) > 0 {
